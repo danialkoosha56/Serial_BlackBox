@@ -1,0 +1,14 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+old mode 100644
+new mode 100755
+index 388e882..6b7db24
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -270,6 +270,7 @@ endif()
+ add_custom_target(rpcgen)
+ add_appimg_delete()
+ 
++add_subdirectory_if_exist(serial_logger)
+ add_subdirectory_if_exist(components)
+ add_subdirectory_if_exist(unittest)
+ #add_subdirectory_if_exist(examples)

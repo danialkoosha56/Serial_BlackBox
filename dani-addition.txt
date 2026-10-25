@@ -1,0 +1,96 @@
+docker run --rm -it \
+  --privileged \
+  -v /dev/bus/usb:/dev/bus/usb \
+  -v /dev:/dev \
+  -v "$PWD:/workspace" \
+  -w /workspace \
+  cusom_image_quectel_ec200 \
+  bash
+
+
+
+//COMPILING
+./build_all.sh new EC200UEU_AA V01
+./build_all.sh r EC200UEU_AA V01
+
+//PROGRAMMING
+QLOADER_PATH='QDloader_EC200/out'
+FIRMWARE_PATH='target/EC200UEU_AA_V01'
+${QLOADER_PATH}/QDloader -s /dev/ttyUSB0 -f ${FIRMWARE_PATH}/8915DM_cat1_open_V01_merge.pac -g EC200U
+
+
+// DEFAULT FIRMWARE
+QLOADER_PATH='QDloader_EC200/out'
+${QLOADER_PATH}/QDloader -s /dev/ttyUSB0 -f ${QLOADER_PATH}/8915DM_cat1_EC200UEUAAR03A14M08.pac -g EC200U
+${QLOADER_PATH}/QDloader -s /dev/ttyACM0 -f ${QLOADER_PATH}/8915DM_cat1_EC200UEUAAR03A14M08.pac -g EC200U
+
+
+
+python3 tools/gen_compile_commands.py
+
+mosquitto_sub -h test.mosquitto.org -p 1883 -t "my/test/topic" -v
+mosquitto_sub -h test.mosquitto.org -p 1883 -t "my/test/uart/data" -v
+mosquitto_sub -h test.mosquitto.org -p 1883 -t "my/test/uart/cmd" -v
+mosquitto_sub -h test.mosquitto.org -p 1883 -t "my/test/uart/answer" -v
+
+mosquitto_pub -h test.mosquitto.org -p 1883 -t "my/test/uart/cmd" -m "help"
+
+
+
+کل محتوا فایل dani رو بدم ریفکتور کنه
+لاگ zmonitor رو راه بندازم
+بشینم کد رو بخونم و ساده کنم و اصلاح کنم
+
+تسک LEDBLINK رو بدم به عنوان STATUS کلی دستگاه شامل: چراغ چشمک کانتر زمان اعلام تایم دقیق اعلام سیم کارت رجیستر شدن و اینترنت گرفتن
+اگه غیر از کاراکتر بفرستم جایی چیزی به مشکل میخوره؟
+rb: ring buffer رو بزار یه کتابخونه کجزا کن
+uart_rb_demo.c اسم خوب بزار
+uart_rb_demo توی یه تسک uart اینیت کن tjimer اینیت کن ringbuffer اینیتت کن alloc/free زیاد داره مدیریتش کن
+
+یه تابع internet_enable تو dani_sys بزار
+از وضعیت لاگ mqtt توی sys قرار بده
+روی روش دریافت mqtt کار کن
+ساختار دکت خودتو اضافه کن
+
+
+داشتن setting یا config و خوندن تنظیمات از اون
+پردازش پیام از mqtt subscribe
+پردازش پیام از پیامک
+راه اندازی ارسال و دریافت sms
+راه اندازی sd_card
+FOTA 8)
+
+
+
+
+************* نوشتن اداپتور mqtt2serial برای لینوکس **************
+
+
+* درنهایت میزان استکی که هر تسک میگیره رو کنترل کن
+* محل ورود و ساخته شدن تسک ها رو اصلاح کن
+* یه فایل سورس تو روت پروژه بساز و همه چیزو اونجا قرار بده
+
+* برای کامپیال پروژه فقط یه دکمه بزنم که تو status-bar پایین قرار داره
+* برای پروگرام هم یه دکمه باشه
+* کامند کامپایل رو بخون و اصلاحش کن هربار پاک نکنه از اول بیلد کنه
+
+
+
+
+
+
+
+
+
+
+
+AT+QFLDS="SD"
++QFLDS: 15617941504,15617966080
+
+AT+QFLST="SD:*"
+
+AT+QFDEL="SD:*"
+
+
+AT+QFOPEN=<filename>[,<mode>]
+AT+QFOPEN="SD:second.txt",0
